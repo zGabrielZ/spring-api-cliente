@@ -2,6 +2,8 @@ package com.gabrielferreira.br.springapicliente.service;
 
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -26,6 +28,18 @@ public class ClienteService {
 		dtoParaEntidade(clienteDTO, cliente);
 		cliente = clienteRepositorio.save(cliente);
 		return new ClienteDTO(cliente);
+	}
+	
+	@Transactional
+	public ClienteDTO atualizarCliente(Long id,ClienteDTO clienteDTO) {
+		try {
+			Cliente cliente = clienteRepositorio.getOne(id);
+			dtoParaEntidade(clienteDTO, cliente);
+			cliente = clienteRepositorio.save(cliente);
+			return new ClienteDTO(cliente);
+		} catch (EntityNotFoundException e) {
+			throw new EntidadeNaoEncontradaException("Cliente não encontrado. ID : " + id);
+		}
 	}
 	
 	public Page<ClienteDTO> listagensClientes(PageRequest pageRequest){
