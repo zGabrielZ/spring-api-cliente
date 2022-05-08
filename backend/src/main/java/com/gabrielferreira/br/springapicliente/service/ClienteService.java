@@ -20,6 +20,14 @@ public class ClienteService {
 	@Autowired
 	private ClienteRepositorio clienteRepositorio;
 
+	@Transactional
+	public ClienteDTO inserirCliente(ClienteDTO clienteDTO) {
+		Cliente cliente = new Cliente();
+		dtoParaEntidade(clienteDTO, cliente);
+		cliente = clienteRepositorio.save(cliente);
+		return new ClienteDTO(cliente);
+	}
+	
 	public Page<ClienteDTO> listagensClientes(PageRequest pageRequest){
 		Page<Cliente> clientes = clienteRepositorio.findAll(pageRequest);
 		Page<ClienteDTO> clienteDTOs = clientes.map(c -> new ClienteDTO(c));
@@ -43,5 +51,13 @@ public class ClienteService {
 		} catch (EmptyResultDataAccessException e) {
 			throw new EntidadeNaoEncontradaException("Cliente não encontrado. ID : " + id);
 		}
+	}
+	
+	private void dtoParaEntidade(ClienteDTO clienteDTO, Cliente cliente) {
+		cliente.setNome(clienteDTO.getNome());
+		cliente.setCpf(clienteDTO.getCpf());
+		cliente.setRenda(clienteDTO.getRenda());
+		cliente.setDataNascimento(clienteDTO.getDataNascimento());
+		cliente.setCrianca(clienteDTO.getCrianca());
 	}
 }
