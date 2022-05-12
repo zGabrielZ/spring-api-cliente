@@ -4,12 +4,7 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "CLIENTE")
@@ -38,6 +33,12 @@ public class Cliente implements Serializable{
 	
 	@Column(name = "crianca", nullable = false)
 	private Integer crianca;
+
+	@Column(name = "criado", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+	private Instant criado;
+
+	@Column(name = "atualizado", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+	private Instant atualizado;
 	
 	public Cliente() {}
 
@@ -96,6 +97,16 @@ public class Cliente implements Serializable{
 
 	public void setCrianca(Integer crianca) {
 		this.crianca = crianca;
+	}
+
+	@PrePersist
+	private void preInsercao(){
+		criado = Instant.now();
+	}
+
+	@PreUpdate
+	private void preUpdate(){
+		atualizado = Instant.now();
 	}
 
 	@Override
